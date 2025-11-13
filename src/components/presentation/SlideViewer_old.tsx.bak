@@ -1,0 +1,154 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Sparkles,
+  BarChart3,
+} from "lucide-react";
+import type { Presentation } from "@/types/presentation";
+
+interface SlideViewerProps {
+  presentation: Presentation;
+  onStartPractice: () => void;
+}
+
+export function SlideViewer({ presentation, onStartPractice }: SlideViewerProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = presentation.totalSlides;
+
+  const goToNextSlide = () => {
+    if (currentSlide < totalSlides - 1) {
+      setCurrentSlide(currentSlide + 1);
+    }
+  };
+
+  const goToPrevSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goToNextSlide();
+      if (e.key === "ArrowLeft") goToPrevSlide();
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [currentSlide]);
+
+  // Get PDF URL for current slide
+  const getPdfUrl = () => {
+    if (presentation.fileType === "pdf") {
+      return `${presentation.fileUrl}#page=${currentSlide + 1}`;
+    }
+    return presentation.fileUrl;
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      {/* Top Bar */}
+      <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">{presentation.title}</h2>
+              <p className="text-sm text-slate-400">
+                {totalSlides} slides • Ready to practice
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Generate Script
+              </button>
+              <button className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Past Sessions
+              </button>
+              <button
+                onClick={onStartPractice}
+                className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition-all text-sm font-semibold flex items-center gap-2 shadow-lg shadow-blue-500/20"
+              >
+                <Play className="w-4 h-4" />
+                Start Practice
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Slide Area */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex items-center justify-center min-h-[70vh]">
+          {/* Slide Container */}
+          <div className="relative w-full max-w-5xl">
+            {/* Slide Display */}
+            <div className="relative aspect-video bg-white rounded-xl shadow-2xl overflow-hidden">
+              {presentation.fileType === "pdf" ? (
+                // PDF Viewer
+                <iframe
+                  src={getPdfUrl()}
+                  className="w-full h-full"
+                  title={`Slide ${currentSlide + 1}`}
+                />
+              ) : (
+                // Fallback for other formats
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
+                  <div className="text-center text-slate-600 p-8">
+                    <p className="text-2xl font-semibold mb-2">
+                      Slide {currentSlide + 1}
+                    </p>
+                    <p className="text-sm mb-4">
+                      {presentation.fileType.toUpperCase()} Preview
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Upload file: {presentation.fileName}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Arrows */}
+              <button
+                onClick={goToPrevSlide}
+                disabled={currentSlide === 0}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center z-10"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+
+              <button
+                onClick={goToNextSlide}
+                disabled={currentSlide === totalSlides - 1}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center z-10"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            </div>
+
+            {/* Slide Counter */}
+            <div className="mt-6 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/50 backdrop-blur-sm rounded-full">
+                <span className="text-sm font-medium">
+                  {currentSlide + 1} / {totalSlides}
+                </span>
+              </div>
+            </div>
+
+            {/* Tips */}
+            <div className="mt-8 p-4 bg-slate-900/50 border border-slate-800 rounded-xl">
+              <p className="text-sm text-slate-400 text-center">
+                💡 Use <kbd className="px-2 py-1 bg-slate-800 rounded text-xs">←</kbd> <kbd className="px-2 py-1 bg-slate-800 rounded text-xs">→</kbd> arrow keys to navigate
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
