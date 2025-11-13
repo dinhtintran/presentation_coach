@@ -3,6 +3,18 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { db } from "@/db";
 import { presentationsTable } from "@/db/schema";
+import { promisify } from "util";
+
+// Dynamic import for libreoffice-convert (only works in Node.js environment)
+let convertAsync: any = null;
+if (typeof window === "undefined") {
+  try {
+    const libre = require("libreoffice-convert");
+    convertAsync = promisify(libre.convert);
+  } catch (error) {
+    console.warn("libreoffice-convert not available:", error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,20 +54,45 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const fileName = `${timestamp}-${sanitizedName}`;
-    const filePath = path.join(uploadsDir, fileName);
+    const originalFileName = `${timestamp}-${sanitizedName}`;
+    const originalFilePath = path.join(uploadsDir, originalFileName);
 
-    // Save file
+    // Save original file
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    await writeFile(originalFilePath, buffer);
+
+    // Determine final file to use for viewing
+    let viewFileName = originalFileName;
+    let fileType = file.type.includes("pdf") ? "pdf" : "pptx";
+
+    // Convert PPTX to PDF if needed
+    if (file.type.includes("presentation") && convertAsync) {
+      try {
+        console.log("Converting PPTX to PDF...");
+        const pdfBuffer = await convertAsync(buffer, ".pdf", undefined);
+        
+        // Save converted PDF
+        const pdfFileName = `${timestamp}-${sanitizedName.replace(/\.(pptx|ppt)$/i, ".pdf")}`;
+        const pdfFilePath = path.join(uploadsDir, pdfFileName);
+        await writeFile(pdfFilePath, pdfBuffer);
+        
+        // Use PDF for viewing
+        viewFileName = pdfFileName;
+        fileType = "pdf";
+        console.log("Conversion successful:", pdfFileName);
+      } catch (conversionError) {
+        console.error("PPTX to PDF conversion failed:", conversionError);
+        // Continue with original PPTX file if conversion fails
+      }
+    }
 
     // Process slides based on file type
     let slidesData = [];
     let totalSlides = 0;
     let slideContent: string[] = [];
 
-    if (file.type === "application/pdf") {
+    if (fileType === "pdf") {
       // For MVP: estimate slides from file size
       // In production, use proper PDF parser or cloud service
       const fileSizeKB = file.size / 1024;
@@ -69,8 +106,8 @@ export async function POST(request: NextRequest) {
       // Create slide data
       slidesData = Array.from({ length: totalSlides }, (_, i) => ({
         slideIndex: i,
-        imageUrl: `/uploads/presentations/${fileName}#page=${i + 1}`,
-        thumbnailUrl: `/uploads/presentations/${fileName}#page=${i + 1}`,
+        imageUrl: `/uploads/presentations/${viewFileName}#page=${i + 1}`,
+        thumbnailUrl: `/uploads/presentations/${viewFileName}#page=${i + 1}`,
         content: slideContent[i] || "",
       }));
     } else {
@@ -80,8 +117,8 @@ export async function POST(request: NextRequest) {
       
       slidesData = Array.from({ length: totalSlides }, (_, i) => ({
         slideIndex: i,
-        imageUrl: `/uploads/presentations/${fileName}`,
-        thumbnailUrl: `/uploads/presentations/${fileName}`,
+        imageUrl: `/uploads/presentations/${viewFileName}`,
+        thumbnailUrl: `/uploads/presentations/${viewFileName}`,
         content: `Slide ${i + 1} content`,
       }));
     }
@@ -92,9 +129,9 @@ export async function POST(request: NextRequest) {
       .values({
         userId: 1, // TODO: Get from auth session
         title: file.name.replace(/\.[^/.]+$/, ""),
-        fileName: fileName,
-        fileUrl: `/uploads/presentations/${fileName}`,
-        fileType: file.type.includes("pdf") ? "pdf" : "pptx",
+        fileName: viewFileName,
+        fileUrl: `/uploads/presentations/${viewFileName}`,
+        fileType: fileType,
         totalSlides: totalSlides,
         slidesData: slidesData,
       })

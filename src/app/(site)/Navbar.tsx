@@ -62,6 +62,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
+          <Link
+            href="/waitlist"
+            className="flex items-center gap-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-4 py-2 text-sm text-white font-semibold transition shadow-lg shadow-purple-500/25"
+          >
+            Join Waitlist
+          </Link>
           <a
             href={`https://github.com/${repo}`}
             target="_blank"
@@ -117,6 +123,13 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
+            <Link
+              href="/waitlist"
+              className="block rounded-md px-3 py-2 text-base font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white text-center"
+              onClick={toggleMenu}
+            >
+              Join Waitlist
+            </Link>
             <Link
               href="#pricing"
               className="block rounded-md px-3 py-2 text-base font-medium text-white/90 hover:bg-[#3C3C3C] hover:text-white"

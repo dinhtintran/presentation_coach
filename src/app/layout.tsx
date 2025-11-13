@@ -10,21 +10,22 @@ const bricolageGrotesque = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "ShipFree",
+  title: "PresentationCoach - AI-Powered Public Speaking Training",
   description:
-    "Open Source Alternative to ShipFast - Launch your startup in days Not in weeks",
+    "Master your presentations with real-time AI feedback. Upload slides, practice speaking, get instant analysis on pace, clarity, and confidence.",
   keywords: [
-    "saas",
-    "boilerplate",
-    "open source",
-    "free",
-    "open source shipfast",
-    "shipfree",
-    "idee8",
-    "made by idee8",
-    "free boilerplate",
-    "github",
+    "presentation",
+    "public speaking",
+    "ai coaching",
+    "speech training",
+    "presentation practice",
+    "ai feedback",
+    "presentation skills",
   ],
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+      </head>
       <body className={cn(bricolageGrotesque.className, "antialiased")}>
         {children}
       </body>

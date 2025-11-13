@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Mic, Square, Pause, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Presentation, RecordingState, SlideTimestamp } from "@/types/presentation";
+import { PDFSlideViewer } from "./PDFSlideViewer";
 
 interface PracticeSessionProps {
   presentation: Presentation;
@@ -112,21 +113,36 @@ export function PracticeSession({ presentation, onSessionComplete }: PracticeSes
 
   // Navigate slides
   const goToSlide = (index: number) => {
-    if (!recordingState.isRecording) return;
+    // Clamp slide index within range
+    const nextIndex = Math.max(0, Math.min(presentation.totalSlides - 1, index));
 
-    const currentTime = Date.now() - startTimeRef.current;
-    
-    const newTimestamp: SlideTimestamp = {
-      slideIndex: index,
-      timestamp: currentTime,
-    };
+    // Record timestamp only when recording
+    const newTimestamp: SlideTimestamp | null = recordingState.isRecording
+      ? {
+          slideIndex: nextIndex,
+          timestamp: Date.now() - startTimeRef.current,
+        }
+      : null;
 
     setRecordingState((prev) => ({
       ...prev,
-      currentSlide: index,
-      slideTimestamps: [...prev.slideTimestamps, newTimestamp],
+      currentSlide: nextIndex,
+      slideTimestamps: newTimestamp ? [...prev.slideTimestamps, newTimestamp] : prev.slideTimestamps,
     }));
   };
+
+  // Keyboard navigation (Left/Right arrows)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        goToSlide(recordingState.currentSlide - 1);
+      } else if (e.key === "ArrowRight") {
+        goToSlide(recordingState.currentSlide + 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [recordingState.currentSlide, presentation.totalSlides, recordingState.isRecording]);
 
   // Format time display
   const formatTime = (seconds: number) => {
@@ -187,10 +203,9 @@ export function PracticeSession({ presentation, onSessionComplete }: PracticeSes
             {/* Current Slide */}
             <div className="relative aspect-video bg-white rounded-xl shadow-2xl overflow-hidden">
               {presentation.fileType === "pdf" ? (
-                <iframe
-                  src={`${presentation.fileUrl}#page=${recordingState.currentSlide + 1}`}
-                  className="w-full h-full"
-                  title={`Slide ${recordingState.currentSlide + 1}`}
+                <PDFSlideViewer
+                  fileUrl={presentation.fileUrl}
+                  currentSlide={recordingState.currentSlide}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">

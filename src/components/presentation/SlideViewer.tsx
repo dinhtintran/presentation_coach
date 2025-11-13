@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  Play,
-  Sparkles,
+  FileText,
+  AlertCircle,
 } from "lucide-react";
 import type { Presentation } from "@/types/presentation";
+import { PDFSlideViewer } from "./PDFSlideViewer";
 
 interface SlideViewerProps {
   presentation: Presentation;
@@ -40,120 +41,88 @@ export function SlideViewer({ presentation, onStartPractice }: SlideViewerProps)
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [currentSlide]);
 
-  // Get PDF URL for current slide
-  const getPdfUrl = () => {
-    if (presentation.fileType === "pdf") {
-      return `${presentation.fileUrl}#page=${currentSlide + 1}`;
-    }
-    return presentation.fileUrl;
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            {presentation.title}
-          </h2>
-          <p className="text-gray-300">
-            Review your slides before practicing
-          </p>
-        </div>
+    <div className="w-full h-full flex flex-col">
+      {/* Navigation Controls - Top */}
+      <div className="flex items-center justify-between mb-6 bg-white/5 backdrop-blur border border-white/10 rounded-xl p-4 flex-shrink-0">
+        <button
+          onClick={goToPrevSlide}
+          disabled={currentSlide === 0}
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          <span className="hidden sm:inline">Previous</span>
+        </button>
 
-        {/* Slide Display */}
-        <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 mb-6">
-          <div className="aspect-video bg-slate-950 rounded-xl overflow-hidden mb-6 flex items-center justify-center">
-            {presentation.fileType === "pdf" ? (
-              <iframe
-                src={getPdfUrl()}
-                className="w-full h-full"
-                title={`Slide ${currentSlide + 1}`}
-              />
-            ) : (
-              <div className="text-gray-400 text-center">
-                <p>Preview not available for this format</p>
-                <p className="text-sm mt-2">
-                  {presentation.fileName}
-                </p>
-              </div>
-            )}
+        <div className="text-center">
+          <div className="text-white font-semibold text-lg">
+            Slide {currentSlide + 1} of {totalSlides}
           </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={goToPrevSlide}
-              disabled={currentSlide === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Previous
-            </button>
-
-            <div className="text-center">
-              <div className="text-white font-semibold">
-                Slide {currentSlide + 1} of {totalSlides}
-              </div>
-              <div className="text-gray-400 text-sm mt-1">
-                Use arrow keys to navigate
-              </div>
-            </div>
-
-            <button
-              onClick={goToNextSlide}
-              disabled={currentSlide === totalSlides - 1}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Next
-              <ChevronRight className="w-5 h-5" />
-            </button>
+          <div className="text-gray-400 text-xs mt-1 hidden sm:block">
+            Use arrow keys to navigate
           </div>
         </div>
 
-        {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Start Practice */}
-          <button
-            onClick={onStartPractice}
-            className="group bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-8 text-left hover:shadow-xl hover:shadow-purple-500/30 transition-all"
-          >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <Play className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Start Practice</h3>
-                <p className="text-purple-100 text-sm">
-                  Ready to record your presentation
-                </p>
-              </div>
-            </div>
-            <p className="text-white/80 text-sm">
-              Record your voice while presenting. Get instant AI feedback on pace, clarity, and confidence.
-            </p>
-          </button>
+        <button
+          onClick={goToNextSlide}
+          disabled={currentSlide === totalSlides - 1}
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
 
-          {/* Generate Script (Coming Soon) */}
-          <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-            <div className="absolute top-4 right-4 px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs text-purple-300 font-medium">
-              Coming Soon
-            </div>
-            <div className="flex items-center gap-4 mb-4 opacity-50">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-purple-300" />
+      {/* Slide Display */}
+      <div className="flex-1 min-h-0">
+        <div className="h-full w-full bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center">
+          {presentation.fileType === "pdf" ? (
+             <PDFSlideViewer
+               fileUrl={presentation.fileUrl}
+               currentSlide={currentSlide}
+             />
+          ) : (
+            <div className="text-center px-8 py-12 max-w-md mx-auto">
+              {/* Icon */}
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl rotate-6" />
+                <div className="relative w-full h-full bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                  <FileText className="w-10 h-10 text-blue-400" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Generate Script</h3>
-                <p className="text-gray-300 text-sm">
-                  AI-powered speaking notes
+
+              {/* Message */}
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold text-white">
+                  PowerPoint File Ready
+                </h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Your presentation has been uploaded successfully. Click <span className="text-purple-400 font-semibold">"Start Practice"</span> to begin recording your presentation.
                 </p>
+                
+                {/* File Info */}
+                <div className="mt-6 bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div className="text-left flex-1">
+                      <p className="text-xs text-gray-400 mb-1">File name:</p>
+                      <p className="text-sm text-white font-medium break-all">
+                        {presentation.fileName}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {totalSlides} slide{totalSlides > 1 ? 's' : ''} detected
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tip */}
+                <div className="mt-6 text-xs text-gray-500 bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                  💡 <span className="text-gray-400">Tip: Open your PowerPoint file in presentation mode on another screen while practicing.</span>
+                </div>
               </div>
             </div>
-            <p className="text-gray-400 text-sm">
-              Get AI-generated speaking scripts tailored to your slides. Practice with professional guidance.
-            </p>
-          </div>
+          )}
         </div>
       </div>
     </div>

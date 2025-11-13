@@ -51,7 +51,15 @@ export const practiceSessionsTable = pgTable("practice_sessions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Analysis Reports Table
+// Waitlist Table
+export const waitlistTable = pgTable("waitlist", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  email: varchar({ length: 255 }).notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Analysis Results Table
 export const analysisReportsTable = pgTable("analysis_reports", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   sessionId: integer("session_id")

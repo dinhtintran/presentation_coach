@@ -10,9 +10,7 @@ export default function CTA() {
           section...
         </p>
         <a
-          href="https://github.com/idee8/shipfree"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/waitlist"
           className="inline-flex items-center gap-2 rounded-lg bg-[#FFB800] px-6 py-3 text-base font-medium text-black transition-colors hover:bg-[#FFB800]/90"
         >
           <svg
@@ -29,7 +27,7 @@ export default function CTA() {
               strokeLinejoin="round"
             />
           </svg>
-          Get ShipFree
+          Join Waitlist
         </a>
       </div>
     </section>

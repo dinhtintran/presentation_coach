@@ -31,13 +31,11 @@ const HeroSection = () => {
           </p>
 
           <Link
-            href="https://github.com/idee8/shipfree"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/waitlist"
             className="inline-flex mt-5 items-center justify-center gap-2 bg-[#FFBE1A] hover:bg-yellow-500 text-black px-8 sm:px-20 py-3 rounded-xl font-medium text-lg mb-6 duration-300 transition-colors"
           >
             <Zap fill="#000000" className="w-5 h-5" />
-            Get ShipFree
+            Join Waitlist
           </Link>
 
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">

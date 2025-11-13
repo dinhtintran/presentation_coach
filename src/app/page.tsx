@@ -13,18 +13,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">🎤</span>
-              </div>
+              <img src="/logo.png" alt="PresentationCoach" className="w-10 h-10" />
               <span className="text-white font-bold text-xl">Presentation Coach</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-gray-300 hover:text-white transition">Features</a>
               <a href="#how-it-works" className="text-gray-300 hover:text-white transition">How it Works</a>
               <a href="#pricing" className="text-gray-300 hover:text-white transition">Pricing</a>
-              <a href="/auth/login" className="text-gray-300 hover:text-white transition">Sign In</a>
-              <a href="/presentation-coach" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition">
-                Try Free
+              <a href="/waitlist" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition">
+                Join Waitlist
               </a>
             </div>
           </div>
@@ -47,11 +44,8 @@ export default function Home() {
             Upload your slides, practice speaking, and get instant AI analysis on pace, clarity, filler words, and confidence.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <a href="/presentation-coach" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-xl hover:shadow-purple-500/50 transition">
-              Start Practicing Free
-            </a>
-            <a href="#how-it-works" className="bg-white/10 backdrop-blur text-white px-8 py-4 rounded-lg text-lg font-semibold border border-white/20 hover:bg-white/20 transition">
-              Watch Demo
+            <a href="/waitlist" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-xl hover:shadow-purple-500/50 transition">
+              Join Waitlist - Get Early Access
             </a>
           </div>
           
@@ -225,8 +219,8 @@ export default function Home() {
                   <span className="text-gray-600">✗</span> AI script generation
                 </li>
               </ul>
-              <a href="/presentation-coach" className="block w-full bg-white/10 text-white py-3 rounded-lg text-center font-semibold hover:bg-white/20 transition">
-                Get Started
+              <a href="/waitlist" className="block w-full bg-white/10 text-white py-3 rounded-lg text-center font-semibold hover:bg-white/20 transition">
+                Join Waitlist
               </a>
             </div>
 
@@ -254,8 +248,8 @@ export default function Home() {
                   <span className="text-green-400">✓</span> Progress tracking
                 </li>
               </ul>
-              <a href="/presentation-coach" className="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg text-center font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition">
-                Start Pro Trial
+              <a href="/waitlist" className="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg text-center font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition">
+                Join Waitlist
               </a>
             </div>
 
@@ -296,8 +290,8 @@ export default function Home() {
           <p className="text-xl text-purple-100 mb-8">
             Join thousands of professionals improving their public speaking skills
           </p>
-          <a href="/presentation-coach" className="inline-block bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-xl transition">
-            Start Practicing Now - It's Free
+          <a href="/waitlist" className="inline-block bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-xl transition">
+            Join Waitlist - It's Free
           </a>
         </div>
       </section>
@@ -308,9 +302,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">🎤</span>
-                </div>
+                <img src="/logo.png" alt="PresentationCoach" className="w-8 h-8" />
                 <span className="text-white font-bold">Presentation Coach</span>
               </div>
               <p className="text-gray-400 text-sm">
@@ -323,7 +315,7 @@ export default function Home() {
               <ul className="space-y-2">
                 <li><a href="#features" className="text-gray-400 hover:text-white text-sm transition">Features</a></li>
                 <li><a href="#pricing" className="text-gray-400 hover:text-white text-sm transition">Pricing</a></li>
-                <li><a href="/presentation-coach" className="text-gray-400 hover:text-white text-sm transition">Try Free</a></li>
+                <li><a href="/waitlist" className="text-gray-400 hover:text-white text-sm transition">Join Waitlist</a></li>
               </ul>
             </div>
 
