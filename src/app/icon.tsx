@@ -10,3 +10,5 @@ export const metadata: Metadata = {
     apple: '/logo.png',
   },
 };
+
+export default {};
